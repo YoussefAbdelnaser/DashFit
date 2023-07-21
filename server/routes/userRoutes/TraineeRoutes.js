@@ -2,9 +2,12 @@ const express = require("express");
 const {
   registerTrainee,
   loginTrainee,
-  getAllTrainee,
 } = require("../../controllers/userControllers/TraineeController.js");
-const { protect } = require("../../middlewares/traineeAuthMiddleware.js");
+
+const {
+  authenticateUser,
+  authorizeRole,
+} = require("../../middlewares/authMiddleware.js");
 
 const router = express.Router();
 
