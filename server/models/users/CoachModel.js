@@ -20,9 +20,6 @@ const coachSchema = new Schema({
   subscriptionsOffred: [
     { type: mongoose.Schema.ObjectId, ref: "Subscription", required: true },
   ],
-  trainees: [
-    { type: mongoose.Schema.ObjectId, ref: "Trainee", required: true },
-  ],
 });
 
 module.exports = mongoose.model("Coach", coachSchema);

@@ -17,7 +17,6 @@ const traineeSchema = new Schema({
     required: true,
     default: "Trainee",
   },
-  coach: { type: mongoose.Schema.Types.ObjectId, ref: "Coach" },
 });
 
 module.exports = mongoose.model("Trainee", traineeSchema);

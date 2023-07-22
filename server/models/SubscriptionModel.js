@@ -11,7 +11,12 @@ const subscriptionSchema = new Schema({
     enum: ["1 month", "3 months", "6 months", "12  months"],
     required: true,
   },
-  plan: { type: mongoose.Schema.ObjectId, ref: "Plan" },
+  coach: { type: mongoose.Schema.ObjectId, ref: "Coach", required: true },
+  trainees: [
+    { type: mongoose.Schema.ObjectId, ref: "Trainee", required: true },
+  ],
+  prevPlans: [{ type: mongoose.Schema.ObjectId, ref: "Plan" }],
+  currPlan: { type: mongoose.Schema.ObjectId, ref: "Plan" },
 });
 
 module.exports = mongoose.model("Subscription", subscriptionSchema);
