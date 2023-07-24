@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
 
 const Schema = mongoose.Schema;
 
@@ -17,4 +18,19 @@ const adminSchema = new Schema({
   image: { type: String },
 });
 
-module.exports = mongoose.model("Admin", adminSchema);
+const adminValidationSchema = Joi.object({
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  username: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required(),
+  age: Joi.number().integer().min(18).required(),
+  role: Joi.string().valid("Admin").required(),
+  image: Joi.string().uri().allow(null, ""),
+});
+
+const validateAdmin = (admin) => adminValidationSchema.validate(admin);
+
+const Admin = mongoose.model("Admin", adminSchema);
+
+module.exports = { Admin, validateAdmin };
