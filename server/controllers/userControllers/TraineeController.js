@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const Trainee = require("../../models/users/TraineeModel");
+const { Trainee, validateTrainee } = require("../../models/users/TraineeModel");
 
 //reg new trainee
 //POST
@@ -18,17 +18,10 @@ const registerTrainee = asyncHandler(async (req, res) => {
     image,
   } = req.body;
 
-  if (
-    !firstName ||
-    !lastName ||
-    !username ||
-    !email ||
-    !password ||
-    !age ||
-    !phoneNumber
-  ) {
+  const { error } = validateTrainee(req.body);
+  if (error) {
     res.status(400);
-    throw new Error("Please fill the missing feilds");
+    throw new Error(error.details[0].message);
   }
 
   //Check if trainee exists

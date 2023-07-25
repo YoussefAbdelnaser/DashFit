@@ -3,11 +3,14 @@ const {
   registerCoach,
   loginCoach,
 } = require("../../controllers/userControllers/CoachController");
-const { protectCoach } = require("../../middlewares/coachAuthMiddleware");
+const {
+  authenticateUser,
+  authorizeRole,
+} = require("../../middlewares/authMiddleware.js");
 
 const router = express.Router();
 
 router.post("/register", registerCoach);
-router.post("/login", loginCoach);
+router.post("/login", authenticateUser, authorizeRole(["Coach"]), loginCoach);
 
 module.exports = router;

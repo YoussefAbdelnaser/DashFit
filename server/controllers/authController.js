@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const Admin = require("../models/users/AdminModel");
-const Coach = require("../models/users/CoachModel");
-const Trainee = require("../models/users/TraineeModel");
+const { Admin } = require("../models/users/AdminModel");
+const { Coach } = require("../models/users/CoachModel");
+const { Trainee } = require("../models/users/TraineeModel");
 
 const generateToken = (user) => {
   const payload = {

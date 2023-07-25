@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const Coach = require("../../models/users/CoachModel");
+const { Coach, validateCoach } = require("../../models/users/CoachModel");
 
 //reg new coach
 //POST
@@ -18,18 +18,12 @@ const registerCoach = asyncHandler(async (req, res) => {
     image,
   } = req.body;
 
-  if (
-    !firstName ||
-    !lastName ||
-    !username ||
-    !email ||
-    !password ||
-    !age ||
-    !phoneNumber ||
-    !image
-  ) {
+  // Validate coach data
+  const { error } = validateCoach(req.body);
+
+  if (error) {
     res.status(400);
-    throw new Error("Please fill the missing feilds");
+    throw new Error(error.details[0].message);
   }
 
   //Check if coach exists

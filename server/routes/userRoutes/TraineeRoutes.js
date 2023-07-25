@@ -12,6 +12,11 @@ const {
 const router = express.Router();
 
 router.post("/register", registerTrainee);
-router.post("/login", loginTrainee);
+router.post(
+  "/login",
+  authenticateUser,
+  authorizeRole(["Trainee"]),
+  loginTrainee
+);
 
 module.exports = router;
