@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connection = require("./db.js");
-const traineeRoutes = require("./routes/userRoutes/TraineeRoutes.js");
+const { coachRoutes, traineeRoutes } = require("./routes");
 
 const app = express();
 
@@ -12,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/trainee", traineeRoutes);
+app.use("/api/coach", coachRoutes);
 
 const port = process.env.PORT;
 
