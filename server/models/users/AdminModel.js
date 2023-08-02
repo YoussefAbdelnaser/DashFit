@@ -13,7 +13,6 @@ const adminSchema = new Schema({
   role: {
     type: String,
     enum: ["Admin"],
-    required: true,
   },
   image: { type: String },
 });
@@ -25,7 +24,7 @@ const adminValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
   age: Joi.number().integer().min(18).required(),
-  role: Joi.string().valid("Admin").required(),
+  role: Joi.string().valid("Admin"),
   image: Joi.string().uri().allow(null, ""),
 });
 

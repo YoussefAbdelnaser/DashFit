@@ -15,7 +15,7 @@ const traineeSchema = new Schema({
   role: {
     type: String,
     enum: ["Trainee", "Coach"],
-    required: true,
+
     default: "Trainee",
   },
   subscription: { type: mongoose.Schema.ObjectId, ref: "Subscription" },
@@ -30,7 +30,7 @@ const traineeValidationSchema = Joi.object({
   age: Joi.number().integer().min(18).required(),
   phoneNumber: Joi.number().integer().min(1000000000).required(),
   image: Joi.string().uri().allow(null, ""),
-  role: Joi.string().valid("Trainee", "Coach").required(),
+  role: Joi.string().valid("Trainee", "Coach"),
   subscription: Joi.string().length(24).hex().allow(null),
 });
 

@@ -33,6 +33,7 @@ const dietSchema = new mongoose.Schema({
   },
   goal: { type: String, required: true },
   description: { type: String, required: true },
+  plan: { type: mongoose.Schema.ObjectId, ref: "Plan" },
 });
 
 const dietValidationSchema = Joi.object({
@@ -66,6 +67,7 @@ const dietValidationSchema = Joi.object({
     .required(),
   goal: Joi.string().required(),
   description: Joi.string().required(),
+  plan: Joi.string().length(24).hex(),
 });
 
 const validateDiet = (diet) => dietValidationSchema.validate(diet);

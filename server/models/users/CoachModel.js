@@ -15,11 +15,10 @@ const coachSchema = new Schema({
   role: {
     type: String,
     enum: ["Trainee", "Coach"],
-    required: true,
     default: "Coach",
   },
   subscriptionsOffred: [
-    { type: mongoose.Schema.ObjectId, ref: "Subscription", required: true },
+    { type: mongoose.Schema.ObjectId, ref: "Subscription" },
   ],
 });
 
@@ -32,10 +31,8 @@ const coachValidationSchema = Joi.object({
   age: Joi.number().integer().min(18).required(),
   phoneNumber: Joi.number().integer().min(1000000000).required(),
   image: Joi.string().uri().required(),
-  role: Joi.string().valid("Trainee", "Coach").required(),
-  subscriptionsOffred: Joi.array()
-    .items(Joi.string().length(24).hex())
-    .required(),
+  role: Joi.string().valid("Trainee", "Coach"),
+  subscriptionsOffred: Joi.array().items(Joi.string().length(24).hex()),
 });
 
 const validateCoach = (coach) => coachValidationSchema.validate(coach);

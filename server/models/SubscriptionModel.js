@@ -12,10 +12,8 @@ const subscriptionSchema = new Schema({
     enum: ["1 month", "3 months", "6 months", "12  months"],
     required: true,
   },
-  coach: { type: mongoose.Schema.ObjectId, ref: "Coach", required: true },
-  trainees: [
-    { type: mongoose.Schema.ObjectId, ref: "Trainee", required: true },
-  ],
+  coach: { type: mongoose.Schema.ObjectId, ref: "Coach" },
+  trainees: [{ type: mongoose.Schema.ObjectId, ref: "Trainee" }],
   prevPlans: [{ type: mongoose.Schema.ObjectId, ref: "Plan" }],
   currPlan: { type: mongoose.Schema.ObjectId, ref: "Plan" },
 });
@@ -29,8 +27,8 @@ const subscriptionValidationSchema = Joi.object({
     .required(),
   startDate: Joi.date().iso().required(),
   endDate: Joi.date().iso().greater(Joi.ref("startDate")).required(),
-  coach: Joi.string().length(24).hex().required(),
-  trainees: Joi.array().items(Joi.string().length(24).hex()).required(),
+  coach: Joi.string().length(24).hex(),
+  trainees: Joi.array().items(Joi.string().length(24).hex()),
   prevPlans: Joi.array().items(Joi.string().length(24).hex()).allow(null),
   currPlan: Joi.string().length(24).hex().allow(null),
 });

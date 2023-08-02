@@ -4,6 +4,8 @@ const {
   getAllSubscriptions,
   createSubscription,
   deleteSubscription,
+  updateSubscription,
+  createPlan,
 } = require("./userControllers/CoachController");
 const {
   registerTrainee,
@@ -17,6 +19,8 @@ module.exports = {
   createSubscription,
   getAllSubscriptions,
   deleteSubscription,
+  updateSubscription,
+  createPlan,
   registerTrainee,
   loginTrainee,
   login,

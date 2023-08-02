@@ -6,6 +6,12 @@ const {
   validateCoach,
   Subscription,
   validateSubscription,
+  Plan,
+  validatePlan,
+  Workout,
+  validateWorkout,
+  Diet,
+  validateDiet,
 } = require("../../models");
 
 //reg new coach
@@ -74,11 +80,11 @@ const loginCoach = asyncHandler(async (req, res) => {
     res.json({ coach, token: generateToken(coach._id) });
   } else {
     res.status(404);
-    throw new Error("Inavlid email or password");
+    throw new Error("Invalid email or password");
   }
 });
 
-//create a subscription plan
+//create a subscription
 //POST
 //api/users/coach/create-subscription
 const createSubscription = asyncHandler(async (req, res) => {
@@ -95,9 +101,6 @@ const createSubscription = asyncHandler(async (req, res) => {
       price: req.body.price,
       duration: req.body.duration,
       coach: coach._id,
-      trainees: req.body.trainees,
-      prevPlans: req.body.prevPlans,
-      currPlan: req.body.currPlan,
     });
 
     await subscription.save();
@@ -121,7 +124,7 @@ const getAllSubscriptions = asyncHandler(async (req, res) => {
           "Access denied , can only get subscriptions associated to this user",
       });
 
-      const coach = await Coach.findById(id).populate("subscriptionsOffered");
+      const coach = await Coach.findById(id).populate("subscriptionsOffred");
 
       if (!coach) {
         return res.status(404).send({ message: "Coach not found" });
@@ -134,6 +137,9 @@ const getAllSubscriptions = asyncHandler(async (req, res) => {
   }
 });
 
+//delete subscription
+//DELETE
+//api/users/coach/delete-subscription/:id
 const deleteSubscription = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
@@ -144,12 +150,78 @@ const deleteSubscription = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "Subscription not found" });
     }
 
-    await Subscription.findByIdAndDelete();
+    await Subscription.findByIdAndDelete(id);
     res.status(200).json({ message: "Subscription deleted successfuly" });
   } catch (e) {
     res.status(400).send(`Something went wrong ${e.message}`);
   }
 });
+
+//update subscription
+//PUT
+//api/users/coach/update-subscription/:id
+const updateSubscription = asyncHandler(async (req, res) => {
+  try {
+    const { error } = validateSubscription(req.body);
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
+    const coach = await Coach.findById(req.user._id);
+    if (!coach) {
+      return res.status(404).send({ message: "Coach not found" });
+    }
+
+    const subscription = await Subscription.findById(req.params.id);
+    if (!subscription) {
+      return res.status(404).send({ message: "Subscription not found" });
+    }
+
+    subscription.title = req.body.title;
+    subscription.description = req.body.description;
+    subscription.price = req.body.price;
+    subscription.duration = req.body.duration;
+    subscription.coach = coach._id;
+
+    await subscription.save();
+  } catch (e) {
+    res.status(400).send(`Something went wrong ${e.message}`);
+  }
+});
+
+//create plan
+//POST
+//api/users/coach/create-plan
+const createPlan = asyncHandler(async (req, res) => {
+  try {
+    const { error } = validatePlan(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const coach = await Coach.findById(req.user._id);
+    if (!coach) return res.status(404).send({ message: "Coach not found" });
+
+    const subscription = await Subscription.findById(req.body.subscription);
+    if (!subscription)
+      return res.status(404).send({ message: "Subscription not found" });
+
+    const plan = new Plan({
+      title: req.body.title,
+      description: req.body.description,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      subscription: subscription._id,
+    });
+
+    await plan.save();
+
+    subscription.plans.push(plan._id);
+
+    await subscription.save();
+  } catch (e) {
+    res.status(400).send(`Something went wrong ${e.message}`);
+  }
+});
+
 //generate jwt
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
@@ -161,4 +233,6 @@ module.exports = {
   createSubscription,
   getAllSubscriptions,
   deleteSubscription,
+  updateSubscription,
+  createPlan,
 };

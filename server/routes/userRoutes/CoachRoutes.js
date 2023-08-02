@@ -5,6 +5,7 @@ const {
   getAllSubscriptions,
   createSubscription,
   deleteSubscription,
+  updateSubscription,
 } = require("../../controllers");
 const { authenticateUser, authorizeRole } = require("../../middlewares");
 
@@ -29,6 +30,12 @@ router.delete(
   authenticateUser,
   authorizeRole(["Coach"]),
   deleteSubscription
+);
+router.put(
+  "/:id/update-subscription",
+  authenticateUser,
+  authorizeRole(["Coach"]),
+  updateSubscription
 );
 
 module.exports = router;

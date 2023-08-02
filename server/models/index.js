@@ -4,6 +4,7 @@ const { Trainee, validateTrainee } = require("./users/TraineeModel");
 const { Plan, validatePlan } = require("./PlanModel");
 const { Subscription, validateSubscription } = require("./SubscriptionModel");
 const { Workout, validateWorkout } = require("./WorkoutModel");
+const { Diet, validateDiet } = require("./DietModel");
 const {
   WorkoutSpecifications,
   validateWorkoutSpecifications,
@@ -24,4 +25,6 @@ module.exports = {
   validateWorkout,
   WorkoutSpecifications,
   validateWorkoutSpecifications,
+  Diet,
+  validateDiet,
 };

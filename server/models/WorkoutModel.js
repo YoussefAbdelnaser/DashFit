@@ -38,9 +38,9 @@ const workoutSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.ObjectId,
       ref: "WorkoutSpecifications",
-      required: true,
     },
   ],
+  plan: { type: mongoose.Schema.ObjectId, ref: "Plan" },
 });
 
 const workoutValidationSchema = Joi.object({
@@ -73,9 +73,8 @@ const workoutValidationSchema = Joi.object({
     )
     .required(),
   description: Joi.string().required(),
-  workoutSpecifications: Joi.array()
-    .items(Joi.string().length(24).hex())
-    .required(),
+  workoutSpecifications: Joi.array().items(Joi.string().length(24).hex()),
+  plan: Joi.string().length(24).hex(),
 });
 
 const Workout = mongoose.model("Workout", workoutSchema);
