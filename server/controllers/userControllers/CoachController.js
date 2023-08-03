@@ -193,7 +193,7 @@ const updateSubscription = asyncHandler(async (req, res) => {
 
 //create plan
 //POST
-//api/users/coach/:subscription/create-plan
+//api/users/coach/:id/create-plan
 const createPlan = asyncHandler(async (req, res) => {
   try {
     const { error } = validatePlan(req.body);
@@ -201,6 +201,11 @@ const createPlan = asyncHandler(async (req, res) => {
 
     const coach = await Coach.findById(req.user._id);
     if (!coach) return res.status(404).send({ message: "Coach not found" });
+
+    if (!coach.subscriptionsOffred.includes(req.body.subscription))
+      return res
+        .status(404)
+        .send({ message: "Subscription not offered by coach" });
 
     const subscription = await Subscription.findById(req.body.subscription);
     if (!subscription)
@@ -210,9 +215,8 @@ const createPlan = asyncHandler(async (req, res) => {
     if (plan) {
       subscription.prevPlans.push(plan._id);
       subscription.currPlan.pull(plan._id);
+      await subscription.save();
     }
-
-    await subscription.save();
 
     const newPlan = new Plan({
       title: req.body.title,
@@ -225,6 +229,8 @@ const createPlan = asyncHandler(async (req, res) => {
     await newPlan.save();
     subscription.currPlan.push(newPlan._id);
     await subscription.save();
+
+    res.status(200).json(newPlan);
   } catch (e) {
     res.status(400).send(`Something went wrong ${e.message}`);
   }
