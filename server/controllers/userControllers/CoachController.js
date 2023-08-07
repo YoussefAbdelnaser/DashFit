@@ -86,6 +86,95 @@ const loginCoach = asyncHandler(async (req, res) => {
   }
 });
 
+//change password
+//PUT
+//api/users/coach/:id/change-password
+const changePassword = asyncHandler(async (req, res) => {
+  try {
+    if (!req.params.id)
+      return res.status(400).send({ message: "Coach id is required" });
+
+    const coach = await Coach.findById(req.params.id);
+    if (!coach) return res.status(404).send({ message: "Coach not found" });
+
+    const { oldPassword, newPassword } = req.body;
+
+    const isMatch = await bcrypt.compare(oldPassword, coach.password);
+    if (!isMatch) return res.status(400).send({ message: "Invalid password" });
+
+    //hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    coach.password = hashedPassword;
+    await coach.save();
+
+    res.status(200).json({ message: "Password changed successfuly" });
+  } catch (e) {
+    res.status(400).send(`Something went wrong ${e.message}`);
+  }
+});
+
+//change email
+//PUT
+//api/users/coach/:id/change-email
+const changeEmail = asyncHandler(async (req, res) => {
+  try {
+    if (!req.params.id)
+      return res.status(400).send({ message: "Coach id is required" });
+
+    const coach = await Coach.findById(req.params.id);
+    if (!coach) return res.status(404).send({ message: "Coach not found" });
+
+    const { newEmail } = req.body;
+
+    coach.email = newEmail;
+    await coach.save();
+
+    res.status(200).json({ message: "Email changed successfuly" });
+  } catch (e) {
+    res.status(400).send(`Something went wrong ${e.message}`);
+  }
+});
+
+//get coach profile
+//GET
+//api/users/coach/:id/profile
+const getCoachProfile = asyncHandler(async (req, res) => {
+  try {
+    const coach = await Coach.findById(req.params.id);
+    if (!coach) return res.status(404).send({ message: "Coach not found" });
+
+    res.status(200).json(coach);
+  } catch (e) {
+    res.status(400).send(`Something went wrong ${e.message}`);
+  }
+});
+
+//update coach profile other than password and email
+//PUT
+//api/users/coach/:id/update-profile
+const updateCoachProfile = asyncHandler(async (req, res) => {
+  try {
+    const { error } = validateCoach(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const coach = await Coach.findById(req.params.id);
+    if (!coach) return res.status(404).send({ message: "Coach not found" });
+
+    coach.firstName = req.body.firstName;
+    coach.lastName = req.body.lastName;
+    coach.username = req.body.username;
+    coach.age = req.body.age;
+    coach.phoneNumber = req.body.phoneNumber;
+    coach.image = req.body.image;
+
+    await coach.save();
+  } catch (e) {
+    res.status(400).send(`Something went wrong ${e.message}`);
+  }
+});
+
 //create a subscription
 //POST
 //api/users/coach/create-subscription
@@ -560,6 +649,10 @@ const generateToken = (id) => {
 module.exports = {
   registerCoach,
   loginCoach,
+  changePassword,
+  changeEmail,
+  getCoachProfile,
+  updateCoachProfile,
   createSubscription,
   getAllSubscriptions,
   deleteSubscription,
